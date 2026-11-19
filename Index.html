@@ -1,0 +1,46 @@
+xt-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .quote {
+            font-style: italic;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            min-height: 60px;
+            line-height: 1.5;
+        }
+
+        button {
+            background: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background: #ff758c;
+            color: #fff;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Hôm nay thế nào?</h1>
+        <p>Bây giờ là:</p>
+        <div id="clock">00:00:00</div>
+        <div class="quote" id="quote">"Đang tải câu nói hay cho bạn..."</div>
+        <button onclick="changeQuote()">Đổi câu khác</button>
+    </div>
+
+    <script>
+        // Đồng hồ thời gian thực
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).
