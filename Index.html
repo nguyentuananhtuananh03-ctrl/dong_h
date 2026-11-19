@@ -1,46 +1,514 @@
-xt-shadow: 0 0 10px rgba(255,255,255,0.5);
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TUANANH STUDIO — Precision Time Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* =====================================================================
+           STUDIO DESIGN TOKENS (DARK DEFAULT #0D0E11 / LIGHT #F4F2EE)
+           ===================================================================== */
+        :root {
+            --bg-page: #0D0E11;
+            --bg-card: #16181D;
+            --bg-control: #1E2128;
+            --ink-primary: #F2EFE9;
+            --ink-secondary: #9A9FA8;
+            --hairline: rgba(242, 239, 233, 0.11);
+            --accent: #D95D39;
+            --accent-soft: rgba(217, 93, 57, 0.16);
+            --sage: #2E7D5B;
+            --sage-soft: rgba(46, 125, 91, 0.16);
+            --shadow-card: 0 24px 64px -18px rgba(0, 0, 0, 0.72), 0 4px 18px -4px rgba(0, 0, 0, 0.45);
+            --shadow-dial: inset 0 1px 2px rgba(255, 255, 255, 0.06), 0 14px 32px -10px rgba(0, 0, 0, 0.65);
         }
 
-        .quote {
-            font-style: italic;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            min-height: 60px;
-            line-height: 1.5;
+        html[data-theme="light"] {
+            --bg-page: #F4F2EE;
+            --bg-card: #FFFFFF;
+            --bg-control: #EAE6DF;
+            --ink-primary: #18181B;
+            --ink-secondary: #686868;
+            --hairline: rgba(24, 24, 27, 0.11);
+            --accent: #D95D39;
+            --accent-soft: rgba(217, 93, 57, 0.12);
+            --sage: #2E7D5B;
+            --sage-soft: rgba(46, 125, 91, 0.12);
+            --shadow-card: 0 20px 54px -16px rgba(24, 24, 27, 0.09), 0 4px 14px -4px rgba(24, 24, 27, 0.04);
+            --shadow-dial: inset 0 2px 4px rgba(255, 255, 255, 0.9), 0 12px 28px -10px rgba(24, 24, 27, 0.1);
         }
 
-        button {
-            background: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 30px;
-            color: #333;
-            font-weight: bold;
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: var(--bg-page);
+            color: var(--ink-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 16px 14px 48px;
+            overflow-x: hidden;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        @media (min-width: 640px) {
+            body {
+                padding: 26px 22px 56px;
+            }
+        }
+
+        .font-serif-display {
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+        }
+
+        .font-tabular {
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: "tnum" 1, "zero" 1;
+        }
+
+        .num-slot {
+            display: inline-block;
+            min-width: 2ch;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+        }
+
+        .surface-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--hairline);
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .control-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 36px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid var(--hairline);
+            background-color: var(--bg-control);
+            color: var(--ink-primary);
+            font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
-            margin-top: 20px;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-decoration: none;
+            user-select: none;
+            white-space: nowrap;
+            transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
         }
 
-        button:hover {
-            background: #ff758c;
-            color: #fff;
-            transform: scale(1.05);
+        .control-pill:hover:not(:disabled) {
+            border-color: var(--accent);
+        }
+
+        .control-pill:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-terracotta {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .btn-terracotta:hover:not(:disabled) {
+            opacity: 0.92;
+            border-color: var(--accent);
+        }
+
+        .btn-sage {
+            background-color: var(--sage);
+            border-color: var(--sage);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .btn-sage:hover:not(:disabled) {
+            opacity: 0.92;
+            border-color: var(--sage);
+        }
+
+        .field-input,
+        .field-select {
+            height: 36px;
+            border-radius: 999px;
+            border: 1px solid var(--hairline);
+            background-color: var(--bg-control);
+            color: var(--ink-primary);
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .field-input:focus,
+        .field-select:focus {
+            border-color: var(--accent);
+        }
+
+        /* =====================================================================
+           INLINE DOCKED "NHẠC VN" PANEL
+           ===================================================================== */
+        #inline-music-panel {
+            display: none;
+            margin-bottom: 16px;
+            padding: 16px;
+            border-radius: 20px;
+            border: 1px solid var(--hairline);
+            background-color: var(--bg-card);
+            box-shadow: var(--shadow-card);
+        }
+
+        #inline-music-panel.open {
+            display: block;
+        }
+
+        .track-selector-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        @media (min-width: 640px) {
+            .track-selector-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .track-choice-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            min-height: 46px;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--hairline);
+            background-color: var(--bg-control);
+            color: var(--ink-primary);
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .track-choice-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .track-choice-btn.active {
+            border-color: var(--accent);
+            background-color: var(--accent-soft);
+        }
+
+        .track-choice-title {
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.35;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+
+        #youtube-ho-vuon-minh-box {
+            display: none;
+            margin-top: 8px;
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid var(--hairline);
+            background-color: var(--bg-control);
+        }
+
+        #youtube-ho-vuon-minh-box.active {
+            display: block;
+        }
+
+        #unlinked-track-notice {
+            display: none;
+            margin-top: 8px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--hairline);
+            background-color: var(--bg-control);
+            font-size: 12px;
+            color: var(--ink-secondary);
+        }
+
+        #unlinked-track-notice.active {
+            display: block;
+        }
+
+        .yt-embed-frame-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--hairline);
+            background-color: #090A0D;
+            margin-top: 10px;
+        }
+
+        .yt-embed-frame-wrap iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* =====================================================================
+           5-TAB NAVIGATION BAR (SINGLE ROW, HORIZONTALLY SCROLLABLE)
+           ===================================================================== */
+        .nav-tabs-bar {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 6px;
+            border-radius: 16px;
+            background-color: var(--bg-control);
+            border: 1px solid var(--hairline);
+        }
+
+        .nav-tabs-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tab-btn {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 36px;
+            padding: 0 15px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--ink-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-tab-btn:hover {
+            color: var(--ink-primary);
+        }
+
+        .nav-tab-btn[aria-selected="true"] {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+        /* =====================================================================
+           ANALOG CLOCK FACE
+           ===================================================================== */
+        .analog-face {
+            position: relative;
+            width: 244px;
+            height: 244px;
+            border-radius: 999px;
+            background-color: var(--bg-control);
+            border: 1px solid var(--hairline);
+            box-shadow: var(--shadow-dial);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (min-width: 640px) {
+            .analog-face {
+                width: 276px;
+                height: 276px;
+            }
+        }
+
+        .clock-hand {
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform-origin: 50% 100%;
+            border-radius: 999px;
+        }
+
+        .scrollable-list::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .scrollable-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: rgba(154, 159, 168, 0.3);
+            border-radius: 999px;
+        }
+
+        /* Toast feedback banner */
+        #toast-banner {
+            position: fixed;
+            bottom: 18px;
+            right: 18px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        #toast-banner.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
-<body>
 
-    <div class="card">
-        <h1>Hôm nay thế nào?</h1>
-        <p>Bây giờ là:</p>
-        <div id="clock">00:00:00</div>
-        <div class="quote" id="quote">"Đang tải câu nói hay cho bạn..."</div>
-        <button onclick="changeQuote()">Đổi câu khác</button>
+<body>
+    <!-- Toast Status Banner -->
+    <div id="toast-banner" role="status" aria-live="polite">
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 15px;border-radius:14px;border:1px solid var(--hairline);background-color:var(--bg-card);color:var(--ink-primary);font-size:12px;font-weight:500;box-shadow:var(--shadow-card);">
+            <span style="width:8px;height:8px;border-radius:999px;background-color:var(--accent);flex-shrink:0;"></span>
+            <span id="toast-message">Sẵn sàng</span>
+        </div>
     </div>
 
-    <script>
-        // Đồng hồ thời gian thực
-        function updateClock() {
-            const now = new Date();
-            const hours = String(now.getHours()).
+    <div class="app-container">
+        <!-- ===================================================================
+             1. TOP NAVIGATION HEADER
+             =================================================================== -->
+        <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:11px;min-width:0;">
+                <span style="width:10px;height:10px;border-radius:999px;background-color:var(--accent);flex-shrink:0;"></span>
+                <div style="min-width:0;">
+                    <div style="font-weight:700;font-size:15px;letter-spacing:0.14em;text-transform:uppercase;line-height:1.2;">TUANANH STUDIO</div>
+                    <div style="font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-secondary);margin-top:2px;">PRECISION TIME STUDIO</div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+                <button id="btn-toggle-music-panel" type="button" class="control-pill" aria-expanded="false" aria-controls="inline-music-panel">
+                    <span id="music-pill-dot" style="width:7px;height:7px;border-radius:999px;background-color:var(--ink-secondary);flex-shrink:0;"></span>
+                    <span id="music-pill-text">Nhạc VN</span>
+                </button>
+
+                <button id="btn-toggle-hour-mode" type="button" class="control-pill font-tabular">
+                    <span id="hour-mode-label">Hệ 24H</span>
+                </button>
+
+                <button id="btn-toggle-theme" type="button" class="control-pill">
+                    <span id="theme-mode-label">Sáng</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ===================================================================
+             2. INLINE DOCKED "NHẠC VN" PANEL (NO SYNTHESIZED AUDIO)
+             =================================================================== -->
+        <section id="inline-music-panel" aria-label="Bảng điều khiển Nhạc VN">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;">
+                <div style="min-width:0;">
+                    <div style="font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);">NHẠC VN</div>
+                    <div id="music-panel-status" style="font-size:13px;font-weight:600;margin-top:2px;">1. Hò vươn mình</div>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <button id="btn-music-close-panel" type="button" class="control-pill">Đóng</button>
+                </div>
+            </div>
+
+            <div id="music-tracks-container" class="track-selector-grid"></div>
+
+            <!-- Direct External YouTube Embed & Watch Link for "1. Hò vươn mình" -->
+            <div id="youtube-ho-vuon-minh-box" class="active" aria-label="Trình phát YouTube Hò vươn mình">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">
+                    <div style="min-width:0;">
+                        <div style="font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);">YOUTUBE · 1. HÒ VƯƠN MÌNH</div>
+                        <div style="font-size:12px;font-weight:600;margin-top:2px;">HÒ VƯƠN MÌNH — Phát trực tiếp qua YouTube</div>
+                    </div>
+                    <a href="http://www.youtube.com/watch?v=CjQ0De1ZfWk" target="_blank" rel="noopener noreferrer" class="control-pill btn-terracotta" style="min-height:30px;padding:0 12px;font-size:11px;">
+                        Mở trên YouTube ↗
+                    </a>
+                </div>
+                <div class="yt-embed-frame-wrap">
+                    <iframe
+                        id="yt-ho-vuon-minh-iframe"
+                        src="https://www.youtube.com/embed/CjQ0De1ZfWk?rel=0"
+                        data-embed-src="https://www.youtube.com/embed/CjQ0De1ZfWk?rel=0"
+                        title="HÒ VƯƠN MÌNH — YouTube Player"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+            </div>
+
+            <!-- Notice when selecting tracks 2, 3, or 4 (no synthesized audio) -->
+            <div id="unlinked-track-notice">
+                <span id="unlinked-track-label" style="font-weight:600;color:var(--ink-primary);"></span>
+                <span> — Đã chọn trong danh sách Nhạc VN (không phát âm thanh tổng hợp; chỉ "1. Hò vươn mình" có liên kết YouTube trực tiếp).</span>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             3. MAIN WORKSPACE CARD & SINGLE-ROW 5-TAB BAR
+             =================================================================== -->
+        <main class="surface-card" style="padding:16px;">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px;">
+                <div role="tablist" aria-label="Điều hướng chính" class="nav-tabs-bar">
+                    <button id="tab-btn-clock" type="button" role="tab" aria-selected="true" aria-controls="tab-panel-clock" data-tab-target="clock" class="nav-tab-btn">
+                        Đồng hồ
+                    </button>
+                    <button id="tab-btn-world" type="button" role="tab" aria-selected="false" aria-controls="tab-panel-world" data-tab-target="world" class="nav-tab-btn">
+                        <span>Thế giới</span>
+                        <span id="world-tab-count" class="font-tabular" style="font-size:11px;opacity:0.85;">0</span>
+                    </button>
+                    <button id="tab-btn-stopwatch" type="button" role="tab" aria-selected="false" aria-controls="tab-panel-stopwatch" data-tab-target="stopwatch" class="nav-tab-btn">
+                        Bấm giờ
+                    </button>
+                    <button id="tab-btn-timer" type="button" role="tab" aria-selected="false" aria-controls="tab-panel-timer" data-tab-target="timer" class="nav-tab-btn">
+                        Hẹn giờ
+                    </button>
+                    <button id="tab-btn-info" type="button" role="tab" aria-selected="false" aria-controls="tab-panel-info" data-tab-target="info" class="nav-tab-btn">
+                        Thông tin
+                    </button>
+                </div>
+
+                <span id="header-tz-badge" class="font-tabular" style="font-size:11px;color:var(--ink-secondary);padding:0 4px;">UTC+07:00</span>
+            </div>
+
+            <!-- Banner when viewing a world city on the main clock -->
+            <div id="active-city-override-bar" style="display:none;margin-bottom:18px;padding:10px 14px;border-radius:14px;border:1px solid var(--accent);background-color:var(--accent-soft);align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+       
